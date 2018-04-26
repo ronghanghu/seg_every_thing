@@ -188,6 +188,12 @@ __C.TRAIN.FREEZE_CONV_BODY = False
 # output directory
 __C.TRAIN.AUTO_RESUME = True
 
+################################################################################
+# For seg-every-thing training
+__C.TRAIN.TRAIN_MASK_HEAD_ONLY = False
+__C.TRAIN.MRCNN_FILTER_LABELS = False
+__C.TRAIN.MRCNN_LABELS_TO_KEEP = ()
+################################################################################
 
 # ---------------------------------------------------------------------------- #
 # Data loader options
@@ -845,6 +851,23 @@ __C.KRCNN.LOSS_WEIGHT = 1.0
 # for detailed discussion.
 __C.KRCNN.NORMALIZE_BY_VISIBLE_KEYPOINTS = True
 
+
+################################################################################
+# For seg-every-thing training
+__C.MRCNN.BBOX2MASK = AttrDict()
+__C.MRCNN.BBOX2MASK.BBOX2MASK_ON = False
+__C.MRCNN.BBOX2MASK.TYPE = b''
+__C.MRCNN.BBOX2MASK.USE_PRETRAINED_EMBED = False
+__C.MRCNN.BBOX2MASK.PRETRAINED_EMBED_NAME = b''
+__C.MRCNN.BBOX2MASK.PRETRAINED_EMBED_DIM = -1
+__C.MRCNN.BBOX2MASK.STOP_DET_W_GRAD = True
+__C.MRCNN.BBOX2MASK.INCLUDE_CLS_SCORE = True
+__C.MRCNN.BBOX2MASK.INCLUDE_BBOX_PRED = False
+__C.MRCNN.BBOX2MASK.USE_LEAKYRELU = True
+
+__C.MRCNN.JOINT_FCN_MLP_HEAD = False
+__C.MRCNN.MLP_MASK_BRANCH_TYPE = b''
+################################################################################
 
 # ---------------------------------------------------------------------------- #
 # R-FCN options

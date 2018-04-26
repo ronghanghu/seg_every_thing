@@ -219,9 +219,12 @@ def build_generic_detection_model(
 
         if model.train:
             loss_gradients = {}
-            for lg in head_loss_gradients.values():
-                if lg is not None:
-                    loss_gradients.update(lg)
+            if cfg.TRAIN.TRAIN_MASK_HEAD_ONLY:
+                loss_gradients.update(head_loss_gradients['mask'])
+            else:
+                for lg in head_loss_gradients.values():
+                    if lg is not None:
+                        loss_gradients.update(lg)
             return loss_gradients
         else:
             return None
@@ -254,7 +257,7 @@ def _add_fast_rcnn_head(
         model, blob_in, dim_in, spatial_scale_in
     )
     fast_rcnn_heads.add_fast_rcnn_outputs(model, blob_frcn, dim_frcn)
-    if model.train:
+    if model.train and not cfg.TRAIN.TRAIN_MASK_HEAD_ONLY:
         loss_gradients = fast_rcnn_heads.add_fast_rcnn_losses(model)
     else:
         loss_gradients = None
@@ -316,8 +319,10 @@ def _add_roi_keypoint_head(
         )
         model.net._net = bbox_net
         loss_gradients = None
-    else:
+    elif not cfg.TRAIN.TRAIN_MASK_HEAD_ONLY:
         loss_gradients = keypoint_rcnn_heads.add_keypoint_losses(model)
+    else:
+        loss_gradients = None
     return loss_gradients
 
 

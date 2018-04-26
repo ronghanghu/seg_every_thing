@@ -185,5 +185,84 @@ DATASETS = {
             _DATA_DIR + '/VOC2012/annotations/voc_2012_trainval.json',
         DEVKIT_DIR:
             _DATA_DIR + '/VOC2012/VOCdevkit2012'
-    }
+    },
+
+    # COCO dataset splits for bbox2mask transfer
+    'coco_split_voc_2014_train': {
+        IM_DIR:
+            _DATA_DIR + '/coco/coco_train2014',
+        ANN_FN:
+            _DATA_DIR + '/coco_bbox2mask/split_voc_instances_train2014.json'
+    },
+    'coco_split_voc_2014_minival': {
+        IM_DIR:
+            _DATA_DIR + '/coco/coco_val2014',
+        ANN_FN:
+            _DATA_DIR + '/coco_bbox2mask/split_voc_instances_minival2014.json'
+    },
+    'coco_split_voc_2014_valminusminival': {
+        IM_DIR:
+            _DATA_DIR + '/coco/coco_val2014',
+        ANN_FN:
+            _DATA_DIR + '/coco_bbox2mask/split_voc_instances_valminusminival2014.json'
+    },
+    'coco_split_nonvoc_2014_train': {
+        IM_DIR:
+            _DATA_DIR + '/coco/coco_train2014',
+        ANN_FN:
+            _DATA_DIR + '/coco_bbox2mask/split_nonvoc_instances_train2014.json'
+    },
+    'coco_split_nonvoc_2014_minival': {
+        IM_DIR:
+            _DATA_DIR + '/coco/coco_val2014',
+        ANN_FN:
+            _DATA_DIR + '/coco_bbox2mask/split_nonvoc_instances_minival2014.json'
+    },
+    'coco_split_nonvoc_2014_valminusminival': {
+        IM_DIR:
+            _DATA_DIR + '/coco/coco_val2014',
+        ANN_FN:
+            _DATA_DIR + '/coco_bbox2mask/split_nonvoc_instances_valminusminival2014.json'
+    },
+    # Visual Genome 3k
+    'vg3k_cocoaligned_train': {
+        IM_DIR:
+            _DATA_DIR + '/vg/images',
+        ANN_FN:
+            _DATA_DIR + '/vg3k_bbox2mask/instances_vg3k_cocoaligned_train.json'
+    },
+    'vg3k_cocoaligned_val': {
+        IM_DIR:
+            _DATA_DIR + '/vg/images',
+        ANN_FN:
+            _DATA_DIR + '/vg3k_bbox2mask/instances_vg3k_cocoaligned_val.json'
+    },
+    'vg3k_cocoaligned_test': {
+        IM_DIR:
+            _DATA_DIR + '/vg/images',
+        ANN_FN:
+            _DATA_DIR + '/vg3k_bbox2mask/instances_vg3k_cocoaligned_test.json'
+    },
 }
+
+# Add the COCO random split datasets
+N_AB = 80
+N_As = [20, 30, 40, 50, 60]
+N_E = 5
+for n_exp in range(N_E):
+    for N_A in N_As:
+        name = 'E{}_A{}B{}'.format(n_exp + 1, N_A, N_AB - N_A)
+        for subset in ['train', 'valminusminival', 'minival']:
+            key_A = 'coco_split_{}_A_2014_{}'.format(name, subset)
+            key_B = 'coco_split_{}_B_2014_{}'.format(name, subset)
+            if subset == 'train':
+                im_dir = \
+                    '/data/local/packages/ai-group.coco_train2014/prod/coco_train2014'
+            else:
+                im_dir = \
+                    '/data/local/packages/ai-group.coco_val2014/prod/coco_val2014'
+            _prefix = _DATA_DIR + '/coco_bbox2mask_randsplits/'
+            ann_fn_A = _prefix + 'split_{}_A_instances_{}2014.json'.format(name, subset)
+            ann_fn_B = _prefix + 'split_{}_B_instances_{}2014.json'.format(name, subset)
+            DATASETS[key_A] = {IM_DIR: im_dir, ANN_FN: ann_fn_A}
+            DATASETS[key_B] = {IM_DIR: im_dir, ANN_FN: ann_fn_B}

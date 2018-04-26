@@ -92,6 +92,18 @@ def parse_args():
         default=None,
         nargs=argparse.REMAINDER
     )
+    parser.add_argument(
+        '--use-vg3k',
+        dest='use_vg3k',
+        help='use Visual Genome 3k classes (instead of COCO 80 classes)',
+        action='store_true'
+    )
+    parser.add_argument(
+        '--thresh',
+        default=0.7,
+        type=float,
+        help='score threshold for predictions',
+    )
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
@@ -115,7 +127,9 @@ def get_rpn_box_proposals(im, args):
 
 def main(args):
     logger = logging.getLogger(__name__)
-    dummy_coco_dataset = dummy_datasets.get_coco_dataset()
+    dummy_coco_dataset = (
+        dummy_datasets.get_vg3k_dataset()
+        if args.use_vg3k else dummy_datasets.get_coco_dataset())
     cfg_orig = yaml.load(yaml.dump(cfg))
     im = cv2.imread(args.im_file)
 
@@ -162,7 +176,7 @@ def main(args):
         dataset=dummy_coco_dataset,
         box_alpha=0.3,
         show_class=True,
-        thresh=0.7,
+        thresh=args.thresh,
         kp_thresh=2
     )
 

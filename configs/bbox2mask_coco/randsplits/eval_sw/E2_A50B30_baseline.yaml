@@ -1,0 +1,53 @@
+FAST_RCNN:
+  ROI_BOX_HEAD: head_builder.add_roi_2mlp_head
+  ROI_XFORM_METHOD: RoIAlign
+  ROI_XFORM_RESOLUTION: 7
+  ROI_XFORM_SAMPLING_RATIO: 2
+FPN:
+  FPN_ON: true
+  MULTILEVEL_ROIS: true
+  MULTILEVEL_RPN: true
+MODEL:
+  CONV_BODY: FPN.add_fpn_ResNet50_conv5_body
+  MASK_ON: true
+  NUM_CLASSES: 81
+  TYPE: mask_rcnn_frozen_features
+MRCNN:
+  CLS_SPECIFIC_MASK: false
+  CONV_INIT: MSRAFill
+  DILATION: 1
+  RESOLUTION: 28
+  ROI_MASK_HEAD: mask_rcnn_heads.ResNet_mask_rcnn_fcn_head_v1up4convs
+  ROI_XFORM_METHOD: RoIAlign
+  ROI_XFORM_RESOLUTION: 14
+  ROI_XFORM_SAMPLING_RATIO: 2
+NUM_GPUS: 8
+OUTPUT_DIR: .
+SOLVER:
+  BASE_LR: 0.02
+  GAMMA: 0.1
+  LR_POLICY: steps_with_decay
+  MAX_ITER: 90000
+  STEPS:
+  - 0
+  - 60000
+  - 80000
+  WEIGHT_DECAY: 0.0001
+TEST:
+  DATASETS: ('coco_split_E2_A50B30_B_2014_minival', 'coco_split_E2_A50B30_A_2014_minival')
+  MAX_SIZE: 1333
+  NMS: 0.5
+  PROPOSAL_FILES: ('https://s3-us-west-2.amazonaws.com/detectron/35998814/12_2017_baselines/rpn_R-50-FPN_1x.yaml.08_06_03.Axg0r179/output/test/coco_2014_minival/generalized_rcnn/rpn_proposals.pkl',
+    'https://s3-us-west-2.amazonaws.com/detectron/35998814/12_2017_baselines/rpn_R-50-FPN_1x.yaml.08_06_03.Axg0r179/output/test/coco_2014_minival/generalized_rcnn/rpn_proposals.pkl')
+  PROPOSAL_LIMIT: 1000
+  SCALE: 800
+TRAIN:
+  BATCH_SIZE_PER_IM: 512
+  DATASETS: ('coco_split_E2_A50B30_A_2014_train', 'coco_split_E2_A50B30_A_2014_valminusminival')
+  MAX_SIZE: 1333
+  PROPOSAL_FILES: ('https://s3-us-west-2.amazonaws.com/detectron/35998814/12_2017_baselines/rpn_R-50-FPN_1x.yaml.08_06_03.Axg0r179/output/test/coco_2014_train/generalized_rcnn/rpn_proposals.pkl',
+    'https://s3-us-west-2.amazonaws.com/detectron/35998814/12_2017_baselines/rpn_R-50-FPN_1x.yaml.08_06_03.Axg0r179/output/test/coco_2014_valminusminival/generalized_rcnn/rpn_proposals.pkl')
+  SCALES: (800,)
+  TRAIN_MASK_HEAD_ONLY: true
+  WEIGHTS: ./lib/datasets/data/trained_models/28594643_model_final.pkl
+USE_NCCL: false

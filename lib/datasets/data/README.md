@@ -2,6 +2,33 @@
 
 This directory contains symlinks to data locations.
 
+## Creating Symlinks for Visual Genome
+
+Download the images in [Visual Genome] (http://visualgenome.org/api/v0/api_home.html).
+
+Optionally, if you want to build the COCO-format json dataset annotations yourself, you also need to download the Version 1.4 annotations (only `image_data.json` and `objects.json` are needed in this case).
+
+Then symlink the Visual Genome dataset:
+
+```
+ln -s /path/to/vg $DETECTRON/lib/datasets/data/vg
+```
+
+We assume that your local Visual Genome dataset copy at `/path/to/vg` has the following directory structure:
+
+```
+vg
+|_ images
+|  |_ VG_100K
+|  |  |_ 2.jpg
+|  |  |_ ...
+|  |_ VG_100K_2
+|_ annotations
+   |_ image_data.json
+   |_ objects.json
+   |_ ...
+```
+
 ## Creating Symlinks for COCO
 
 Symlink the COCO dataset:

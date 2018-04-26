@@ -44,8 +44,17 @@ def add_mask_rcnn_blobs(blobs, sampled_boxes, roidb, im_scale, batch_idx):
     )[0]
     polys_gt = [roidb['segms'][i] for i in polys_gt_inds]
     boxes_from_polys = segm_utils.polys_to_boxes(polys_gt)
-    fg_inds = np.where(blobs['labels_int32'] > 0)[0]
-    roi_has_mask = blobs['labels_int32'].copy()
+    # Keep only a subset of classes (set A in the paper) for mask training
+    if cfg.TRAIN.MRCNN_FILTER_LABELS:
+        keep_label_set = set(cfg.TRAIN.MRCNN_LABELS_TO_KEEP)
+        labels_int32 = blobs['labels_int32']
+        labels_int32_keep = np.array(
+            [(l if l in keep_label_set else 0) for l in labels_int32],
+            dtype=labels_int32.dtype)
+    else:
+        labels_int32_keep = blobs['labels_int32']
+    fg_inds = np.where(labels_int32_keep > 0)[0]
+    roi_has_mask = labels_int32_keep.copy()
     roi_has_mask[roi_has_mask > 0] = 1
 
     if fg_inds.shape[0] > 0:

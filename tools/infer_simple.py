@@ -85,6 +85,18 @@ def parse_args():
     parser.add_argument(
         'im_or_folder', help='image or folder of images', default=None
     )
+    parser.add_argument(
+        '--use-vg3k',
+        dest='use_vg3k',
+        help='use Visual Genome 3k classes (instead of COCO 80 classes)',
+        action='store_true'
+    )
+    parser.add_argument(
+        '--thresh',
+        default=0.7,
+        type=float,
+        help='score threshold for predictions',
+    )
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
@@ -98,7 +110,9 @@ def main(args):
     args.weights = cache_url(args.weights, cfg.DOWNLOAD_CACHE)
     assert_and_infer_cfg(cache_urls=False)
     model = infer_engine.initialize_model_from_cfg(args.weights)
-    dummy_coco_dataset = dummy_datasets.get_coco_dataset()
+    dummy_coco_dataset = (
+        dummy_datasets.get_vg3k_dataset()
+        if args.use_vg3k else dummy_datasets.get_coco_dataset())
 
     if os.path.isdir(args.im_or_folder):
         im_list = glob.iglob(args.im_or_folder + '/*.' + args.image_ext)
@@ -136,7 +150,7 @@ def main(args):
             dataset=dummy_coco_dataset,
             box_alpha=0.3,
             show_class=True,
-            thresh=0.7,
+            thresh=args.thresh,
             kp_thresh=2
         )
 
